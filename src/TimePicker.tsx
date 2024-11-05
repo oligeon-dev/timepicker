@@ -146,7 +146,7 @@ const useIntersection = (defaultTime: string) => {
         }
       },
       //   { root: ref.current, rootMargin: `-${paddingTop} 0px` }
-      { root: ref.current, rootMargin: `-95px 0px` }
+      { root: null, rootMargin: `-95px 0px` }
     );
 
     Array.from(ref.current?.children ?? []).forEach((child) =>

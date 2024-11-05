@@ -33,14 +33,10 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
     },
     ref
   ) => {
-    const { ref: hourRef, currentTime: currentHour } = useScrollTimePicker(
-      defaultHour,
-      maxHour
-    );
-    const { ref: minuteRef, currentTime: currentMinute } = useScrollTimePicker(
-      defaultMinute,
-      60
-    );
+    const { ref: hourRef, currentTime: currentHour } =
+      useScrollTimePicker(defaultHour);
+    const { ref: minuteRef, currentTime: currentMinute } =
+      useScrollTimePicker(defaultMinute);
 
     useEffect(() => {
       hourRef.current?.children[Number(defaultHour)].scrollIntoView({
@@ -121,7 +117,7 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
 
 TimePicker.displayName = "TimePicker";
 
-const useScrollTimePicker = (defaultTime: string, _maxTime: number) => {
+const useScrollTimePicker = (defaultTime: string) => {
   const ref = useRef<HTMLUListElement>(null);
   const [currentTime, setCurrentTime] = useState<string>(defaultTime);
 

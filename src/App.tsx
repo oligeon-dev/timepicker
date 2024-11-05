@@ -20,6 +20,11 @@ function App() {
   return (
     <div className="container">
       <h5>{time}</h5>
+      <TimePicker
+        defaultHour="02"
+        defaultMinute="30"
+        onSubmitTime={handleSubmitTime}
+      />
 
       <button onClick={openModal}>Open Modal</button>
       <Modal isOpen={isModalOpen} onClose={closeModal}>

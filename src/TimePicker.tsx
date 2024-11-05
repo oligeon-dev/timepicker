@@ -136,6 +136,7 @@ const useIntersection = (defaultTime: string) => {
       ? getComputedStyle(ref.current).getPropertyValue("padding-top")
       : "0px";
     console.info("padding top", paddingTop);
+    console.info("ref", ref.current);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -145,8 +146,7 @@ const useIntersection = (defaultTime: string) => {
           setCurrentTime(entries[0].target.textContent ?? defaultTime);
         }
       },
-      //   { root: ref.current, rootMargin: `-${paddingTop} 0px` }
-      { root: null, rootMargin: `-95px 0px` }
+      { root: null, rootMargin: `-${paddingTop} 0px` }
     );
 
     Array.from(ref.current?.children ?? []).forEach((child) =>

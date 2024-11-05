@@ -139,6 +139,7 @@ const useIntersection = (defaultTime: string) => {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        console.info("entry", entries[0]);
         if (entries[0].isIntersecting) {
           console.info("target", entries[0].target.textContent);
           setCurrentTime(entries[0].target.textContent ?? defaultTime);

@@ -1,0 +1,122 @@
+:root {
+  --scroll-area-height: 242px;
+  --scroll-area-padding: var(--spacing-500);
+}
+
+.wrapper {
+  border: 1px solid var(--color-line);
+}
+
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+
+  /** グラデーションのレイヤー */
+  &::after,
+  &::before {
+    content: "";
+    display: block;
+    height: calc(50% - 24px); /** 現在時間のグレー背景の1/2が24px */
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+    background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 60%));
+  }
+
+  &::after {
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 60%), #ffffff);
+  }
+}
+
+.layout {
+  display: flex;
+  height: var(--scroll-area-height);
+  overflow: hidden;
+  position: relative;
+  padding: var(--scroll-area-padding);
+  justify-content: center;
+
+  /** 現在時間の背景 */
+  &::after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    content: "";
+    width: calc(100% - var(--spacing-500) * 2);
+    height: 48px;
+    display: block;
+    background-color: var(--color-tag);
+    z-index: -1;
+    border-radius: var(--round-200);
+  }
+}
+
+.time {
+  margin: 0;
+  /** 
+      * 高さをpaddingで埋め、contentsの高さを中央に配置する。
+      * intersection-observerでcontentsとの交差を検知しisIntersecting: trueのelementを取得するため
+      */
+  padding: calc(
+      (var(--scroll-area-height) - var(--scroll-area-padding) * 2) / 2 -
+        var(--spacing-400)
+    )
+    var(--spacing-800);
+  overflow: scroll;
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  scroll-snap-type: y mandatory;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-500);
+  list-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &:first-child::after {
+    content: ":";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    line-height: 1;
+    font-family: var(--font-family-en);
+    transform: translate3d(-50%, -50%, 0);
+  }
+
+  > li {
+    text-align: center;
+    scroll-snap-align: center;
+    cursor: pointer;
+  }
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  border-top: 1px solid var(--color-line);
+
+  > button {
+    flex: 1;
+    border-radius: 0;
+    padding: var(--spacing-400);
+
+    &:first-child {
+      border-right: 1px solid var(--color-line);
+    }
+  }
+}

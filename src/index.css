@@ -1,0 +1,123 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap");
+
+:root {
+  /* color */
+  --color-main: #0d7a81;
+  --color-sub: #ffcaca;
+  --color-accent: #7551a4;
+  --color-white: #fff;
+  --color-focus: #e9a800;
+  --color-error: #db0000;
+  --color-text: #243040;
+  --color-line: #d9d9d9;
+  --color-line2: #828282;
+  --color-background: #f5f3ef;
+  --color-placeholder: #bdbdbd;
+  --color-disabled: #808080;
+  --color-link: #0d7a81;
+  --color-tag: #f2f2f2;
+  --color-complement: #60666d;
+  --color-tab: #e0d8c8;
+  --color-tab-text: #5a4b2c;
+  --color-sunday: #db0000;
+  --color-calendar: #147ac5;
+
+  /* spacing 100:0.25 */
+  --spacing-100: 0.25rem; /* 4px */
+  --spacing-150: 0.375rem; /* 6px */
+  --spacing-200: 0.5rem; /* 8px */
+  --spacing-250: 0.625rem; /* 10px */
+  --spacing-300: 0.75rem; /* 12px */
+  --spacing-350: 0.875rem; /* 14px */
+  --spacing-400: 1rem; /* 16px */
+  --spacing-500: 1.25rem; /* 20px */
+  --spacing-600: 1.5rem; /* 24px */
+  --spacing-700: 1.75rem; /* 28px */
+  --spacing-800: 2rem; /* 32px */
+  --spacing-900: 2.25rem; /* 36px */
+  --spacing-1000: 2.5rem; /* 40px */
+  --spacing-1100: 2.75rem; /* 44px */
+  --spacing-1200: 3rem; /* 48px */
+
+  --shadow-400: 0px 1px 9px 0px rgba(34, 34, 34, 0.15);
+  --shadow-500: 0px 1px 12px 0px rgba(166, 166, 166, 0.25);
+  --shadow-600: 0px 2px 6px 0px rgba(0, 0, 0, 0.3);
+  --shadow-700: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  --shadow-800: 0px 1px 12px 0px rgba(189, 189, 189, 0.5);
+
+  --round-100: 4px;
+  --round-200: 8px;
+  --round-full: 99rem;
+
+  --font-family-ja: "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3",
+    "Noto Sans JP", sans-serif;
+  --font-family-en: Helvetica, sans-serif;
+
+  --line-height-100: 1;
+  --line-height-200: 1.3;
+  --line-height-300: 1.6;
+
+  --font-weight-regular: 300;
+  --font-weight-bold: 600;
+
+  --font-size-10: 0.625rem;
+  --font-size-12: 0.75rem;
+  --font-size-13: 0.8125rem;
+  --font-size-16: 1rem;
+  --font-size-18: 1.125rem;
+  --font-size-20: 1.25rem;
+  --font-size-24: 1.5rem;
+
+  --z-hide: -1;
+  --z-aut0: auto;
+  --z-base: 0;
+  --z-docked: 10;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-banner: 1200;
+  --z-overlay: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-skipLink: 1600;
+  --z-toast: 1700;
+  --z-tooltip: 1800;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+body {
+  font-family: var(--font-family-ja);
+}
+
+/* input, textarea, select, button要素はデフォルトではfont-familyを継承しない */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+p,
+button,
+a,
+input,
+textarea,
+label {
+  font-style: normal;
+  line-height: var(--line-height-300);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+input,
+textarea {
+  &::placeholder {
+    color: var(--color-placeholder);
+  }
+}

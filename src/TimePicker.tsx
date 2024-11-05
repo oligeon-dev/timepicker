@@ -10,8 +10,6 @@ import {
 } from "react";
 import { clsx } from "clsx";
 
-//   import { Button } from '../Button';
-
 import styles from "./TimePicker.module.css";
 
 type Props = {
@@ -35,10 +33,14 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
     },
     ref
   ) => {
-    const { ref: hourRef, currentTime: currentHour } =
-      useIntersection(defaultHour);
-    const { ref: minuteRef, currentTime: currentMinute } =
-      useIntersection(defaultMinute);
+    const { ref: hourRef, currentTime: currentHour } = useScrollTimePicker(
+      defaultHour,
+      maxHour
+    );
+    const { ref: minuteRef, currentTime: currentMinute } = useScrollTimePicker(
+      defaultMinute,
+      60
+    );
 
     useEffect(() => {
       hourRef.current?.children[Number(defaultHour)].scrollIntoView({
@@ -70,7 +72,7 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
         <div className={styles.container}>
           <div className={clsx(styles.layout, className)} ref={ref} {...rest}>
             <ul
-              className={styles.time}
+              className={clsx(styles.time, styles.scrollable)}
               ref={hourRef}
               role="listbox"
               aria-label="時間を選択"
@@ -82,7 +84,6 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
                   key={`${hour}-hour`}
                   role="option"
                   aria-selected={Number(currentHour) === hour}
-                  // aria-label={${hour}時}
                 >
                   {String(hour).padStart(2, "0")}
                 </li>
@@ -90,7 +91,7 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
             </ul>
 
             <ul
-              className={styles.time}
+              className={clsx(styles.time, styles.scrollable)}
               ref={minuteRef}
               role="listbox"
               aria-label="分を選択"
@@ -102,7 +103,6 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
                   key={`${minute}-minute`}
                   role="option"
                   aria-selected={Number(currentMinute) === minute}
-                  // aria-label={${minute}分}
                 >
                   {String(minute).padStart(2, "0")}
                 </li>
@@ -113,12 +113,6 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
         <div className={styles.buttons}>
           <button onClick={handleCancel}>キャンセル</button>
           <button onClick={handleSubmitTime}>OK</button>
-          {/* <Button intent="ghost" onClick={handleCancel}>
-                キャンセル
-              </Button>
-              <Button intent="ghost" onClick={handleSubmitTime}>
-                OK
-              </Button> */}
         </div>
       </div>
     );
@@ -127,34 +121,43 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
 
 TimePicker.displayName = "TimePicker";
 
-const useIntersection = (defaultTime: string) => {
+const useScrollTimePicker = (defaultTime: string, _maxTime: number) => {
   const ref = useRef<HTMLUListElement>(null);
   const [currentTime, setCurrentTime] = useState<string>(defaultTime);
 
-  useEffect(() => {
-    const paddingTop = ref.current
-      ? getComputedStyle(ref.current).getPropertyValue("padding-top")
-      : "0px";
-    console.info("padding top", paddingTop);
-    console.info("ref", ref.current);
+  const handleScroll = useCallback(() => {
+    const list = ref.current;
+    if (!list) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        console.info("entry", entries[0]);
-        if (entries[0].isIntersecting) {
-          console.info("target", entries[0].target.textContent);
-          setCurrentTime(entries[0].target.textContent ?? defaultTime);
-        }
-      },
-      { root: null, rootMargin: `-${paddingTop} 0px` }
+    const children = Array.from(list.children);
+    const listCenter = list.getBoundingClientRect().top + list.clientHeight / 2;
+
+    let closest = children[0];
+    let closestDistance = Math.abs(
+      closest.getBoundingClientRect().top - listCenter
     );
 
-    Array.from(ref.current?.children ?? []).forEach((child) =>
-      observer.observe(child)
-    );
+    children.forEach((child) => {
+      const distance = Math.abs(child.getBoundingClientRect().top - listCenter);
+      if (distance < closestDistance) {
+        closest = child;
+        closestDistance = distance;
+      }
+    });
 
-    return () => observer.disconnect();
+    setCurrentTime(closest.textContent ?? defaultTime);
   }, [defaultTime]);
+
+  useEffect(() => {
+    const list = ref.current;
+    if (!list) return;
+
+    list.addEventListener("scroll", handleScroll);
+
+    return () => {
+      list.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return {
     currentTime,

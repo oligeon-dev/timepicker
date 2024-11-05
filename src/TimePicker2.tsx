@@ -10,8 +10,6 @@ import {
 } from "react";
 import { clsx } from "clsx";
 
-//   import { Button } from '../Button';
-
 import styles from "./TimePicker.module.css";
 
 type Props = {
@@ -22,7 +20,7 @@ type Props = {
   onCancel?: () => void;
 } & ComponentPropsWithRef<"div">;
 
-export const TimePicker = forwardRef<HTMLDivElement, Props>(
+export const TimePicker2 = forwardRef<HTMLDivElement, Props>(
   (
     {
       className,
@@ -36,9 +34,9 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
     ref
   ) => {
     const { ref: hourRef, currentTime: currentHour } =
-      useIntersection(defaultHour);
+      useScrollTimePicker(defaultHour);
     const { ref: minuteRef, currentTime: currentMinute } =
-      useIntersection(defaultMinute);
+      useScrollTimePicker(defaultMinute);
 
     useEffect(() => {
       hourRef.current?.children[Number(defaultHour)].scrollIntoView({
@@ -82,7 +80,6 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
                   key={`${hour}-hour`}
                   role="option"
                   aria-selected={Number(currentHour) === hour}
-                  // aria-label={${hour}時}
                 >
                   {String(hour).padStart(2, "0")}
                 </li>
@@ -102,7 +99,6 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
                   key={`${minute}-minute`}
                   role="option"
                   aria-selected={Number(currentMinute) === minute}
-                  // aria-label={${minute}分}
                 >
                   {String(minute).padStart(2, "0")}
                 </li>
@@ -113,53 +109,52 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
         <div className={styles.buttons}>
           <button onClick={handleCancel}>キャンセル</button>
           <button onClick={handleSubmitTime}>OK</button>
-          {/* <Button intent="ghost" onClick={handleCancel}>
-                キャンセル
-              </Button>
-              <Button intent="ghost" onClick={handleSubmitTime}>
-                OK
-              </Button> */}
         </div>
       </div>
     );
   }
 );
 
-TimePicker.displayName = "TimePicker";
+TimePicker2.displayName = "TimePicker2";
 
-const useIntersection = (defaultTime: string) => {
+const useScrollTimePicker = (defaultTime: string) => {
   const ref = useRef<HTMLUListElement>(null);
   const [currentTime, setCurrentTime] = useState<string>(defaultTime);
 
-  useEffect(() => {
-    const paddingTop = ref.current
-      ? getComputedStyle(ref.current).getPropertyValue("padding-top")
-      : "0px";
-    console.info("padding top", paddingTop);
-    console.info("ref", ref.current);
+  const handleScroll = useCallback(() => {
+    const list = ref.current;
+    if (!list) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        console.info("entry", entries[0]);
-        if (entries[0].isIntersecting) {
-          console.info("target", entries[0].target.textContent);
-          setCurrentTime(entries[0].target.textContent ?? defaultTime);
-        }
-      },
-      {
-        root: ref.current,
-        rootMargin: `-${Math.round(
-          ref.current?.getBoundingClientRect().top ?? 0
-        )}px 0px`,
+    const children = Array.from(list.children); // リスト内のすべての子要素を配列に変換
+    const listCenter = list.getBoundingClientRect().top + list.clientHeight / 2; // リストの中心位置を計算
+
+    let closest = children[0]; // 最も近い要素を初期化（最初の要素を選択）
+    let closestDistance = Math.abs(
+      closest.getBoundingClientRect().top - listCenter // 初期の最も近い要素とリスト中心との距離を計算
+    );
+
+    children.forEach((child) => {
+      const distance = Math.abs(child.getBoundingClientRect().top - listCenter); // 各子要素とリスト中心との距離を計算
+      if (distance < closestDistance) {
+        // もしこの距離が最も近い要素の距離よりも短い場合
+        closest = child; // 現在の子要素を最も近い要素として更新
+        closestDistance = distance; // 最も近い距離を更新
       }
-    );
+    });
 
-    Array.from(ref.current?.children ?? []).forEach((child) =>
-      observer.observe(child)
-    );
-
-    return () => observer.disconnect();
+    setCurrentTime(closest.textContent ?? defaultTime);
   }, [defaultTime]);
+
+  useEffect(() => {
+    const list = ref.current;
+    if (!list) return;
+
+    list.addEventListener("scroll", handleScroll);
+
+    return () => {
+      list.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return {
     currentTime,

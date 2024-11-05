@@ -139,12 +139,11 @@ const useIntersection = (defaultTime: string) => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setTimeout(() => {
-            setCurrentTime(entries[0].target.textContent ?? defaultTime);
-          }, 0);
+          setCurrentTime(entries[0].target.textContent ?? defaultTime);
         }
       },
-      { root: null, rootMargin: `-${paddingTop} 0px` }
+      //   { root: ref.current, rootMargin: `-${paddingTop} 0px` }
+      { root: ref.current, rootMargin: `calc(-${paddingTop} - 10px) 0px` }
     );
 
     Array.from(ref.current?.children ?? []).forEach((child) =>

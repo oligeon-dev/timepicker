@@ -68,7 +68,7 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
         <div className={styles.container}>
           <div className={clsx(styles.layout, className)} ref={ref} {...rest}>
             <ul
-              className={clsx(styles.time, styles.scrollable)}
+              className={styles.time}
               ref={hourRef}
               role="listbox"
               aria-label="時間を選択"
@@ -87,7 +87,7 @@ export const TimePicker = forwardRef<HTMLDivElement, Props>(
             </ul>
 
             <ul
-              className={clsx(styles.time, styles.scrollable)}
+              className={styles.time}
               ref={minuteRef}
               role="listbox"
               aria-label="分を選択"
@@ -125,19 +125,20 @@ const useScrollTimePicker = (defaultTime: string) => {
     const list = ref.current;
     if (!list) return;
 
-    const children = Array.from(list.children);
-    const listCenter = list.getBoundingClientRect().top + list.clientHeight / 2;
+    const children = Array.from(list.children); // リスト内のすべての子要素を配列に変換
+    const listCenter = list.getBoundingClientRect().top + list.clientHeight / 2; // リストの中心位置を計算
 
-    let closest = children[0];
+    let closest = children[0]; // 最も近い要素を初期化（最初の要素を選択）
     let closestDistance = Math.abs(
-      closest.getBoundingClientRect().top - listCenter
+      closest.getBoundingClientRect().top - listCenter // 初期の最も近い要素とリスト中心との距離を計算
     );
 
     children.forEach((child) => {
-      const distance = Math.abs(child.getBoundingClientRect().top - listCenter);
+      const distance = Math.abs(child.getBoundingClientRect().top - listCenter); // 各子要素とリスト中心との距離を計算
       if (distance < closestDistance) {
-        closest = child;
-        closestDistance = distance;
+        // もしこの距離が最も近い要素の距離よりも短い場合
+        closest = child; // 現在の子要素を最も近い要素として更新
+        closestDistance = distance; // 最も近い距離を更新
       }
     });
 
